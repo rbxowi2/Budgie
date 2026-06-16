@@ -1,0 +1,190 @@
+/* sidebar.css — Right sidebar, top bar, camera info, plugin section */
+
+/* ── Sidebar shell ───────────────────────────────────────────────────────── */
+#sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: #252526;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-left: 1px solid #3a3a3a;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+#top-bar {
+  background: #1e1e1e;
+  border-bottom: 1px solid #3a3a3a;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+#top-bar-title {
+  font-size: 12px; font-weight: 600; color: #d4d4d4; white-space: nowrap;
+}
+#top-bar-title span { color: #555; font-size: 10px; font-weight: normal; }
+#top-bar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#viewer-count-wrap { color: #3a7bd5; font-size: 11px; white-space: nowrap; }
+
+.tbtn {
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #888;
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+.tbtn:hover { border-color: #555; color: #d4d4d4; }
+
+/* ── Scrollable sidebar body ─────────────────────────────────────────────── */
+#sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Section headers and dividers ────────────────────────────────────────── */
+.section-title {
+  font-size: 10px; font-weight: 700; color: #666;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 12px 12px 4px;
+}
+.divider { height: 1px; background: #3a3a3a; margin: 6px 12px; }
+
+/* ── Camera info rows ────────────────────────────────────────────────────── */
+.info-row {
+  display: flex;
+  align-items: center;
+  padding: 2px 12px;
+  font-size: 11px;
+}
+.info-label { color: #666; width: 72px; flex-shrink: 0; }
+.info-value { color: #d4d4d4; }
+
+/* ── Camera selector ─────────────────────────────────────────────────────── */
+.camsel-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px 3px;
+}
+#sel-camera {
+  flex: 1;
+  background: #3a3a3a; color: #d4d4d4;
+  border: 1px solid #444; border-radius: 4px;
+  padding: 5px 7px; font-size: 11px; outline: none;
+  min-width: 0; cursor: pointer;
+}
+#sel-camera:focus { border-color: #3a7bd5; }
+
+#btn-scan {
+  background: #3a3a3a; color: #d4d4d4;
+  border: 1px solid #444; border-radius: 4px;
+  padding: 4px 8px; font-size: 14px;
+  cursor: pointer; flex-shrink: 0;
+  line-height: 1;
+  transition: background 0.15s, transform 0.2s;
+}
+#btn-scan:hover      { background: #4a4a4a; }
+#btn-scan.scanning   { animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Camera action buttons ───────────────────────────────────────────────── */
+.cam-actions {
+  display: flex;
+  gap: 5px;
+  padding: 4px 12px 6px;
+}
+.cam-actions .btn {
+  flex: 1;
+  padding: 7px 4px;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer;
+  color: white;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.cam-actions .btn:active { opacity: 0.7; }
+.btn-open     { background: #3a7bd5; }
+.btn-close    { background: #c0392b; }
+.btn-closeall { background: #555; }
+
+/* ── Status bar ──────────────────────────────────────────────────────────── */
+#status-bar {
+  margin: 4px 12px;
+  padding: 6px 8px;
+  background: #1e1e1e;
+  border-radius: 4px;
+  font-size: 10px; color: #777;
+  min-height: 30px;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+/* ── Plugin section header ───────────────────────────────────────────────── */
+.plugin-section-hdr {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px 3px;
+}
+.plugin-section-hdr .section-title { padding: 0; flex: 1; }
+
+#btn-add-plugin {
+  background: #3a7bd5; border: none; color: white;
+  width: 18px; height: 18px; border-radius: 3px;
+  font-size: 13px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; padding: 0;
+}
+#btn-add-plugin:hover { background: #2e63b0; }
+
+/* ── Plugin UI blocks ────────────────────────────────────────────────────── */
+.plugin-ui-block          { position: relative; }
+.plugin-ui-block.dragging { opacity: 0.4; }
+.plugin-ui-block.drag-over-top    { border-top: 2px solid #3a7bd5; }
+.plugin-ui-block.drag-over-bottom { border-bottom: 2px solid #3a7bd5; }
+
+.plugin-drag-handle {
+  font-size: 12px; color: #444;
+  cursor: grab; padding: 0 4px 0 0;
+  user-select: none; flex-shrink: 0; line-height: 1;
+}
+.plugin-drag-handle:hover  { color: #888; }
+.plugin-drag-handle:active { cursor: grabbing; }
+
+.plugin-order-badge {
+  font-size: 9px; color: #3a7bd5; font-weight: 700;
+  background: rgba(58,123,213,0.15);
+  border-radius: 3px; padding: 1px 4px; margin-right: 4px;
+  flex-shrink: 0; min-width: 14px; text-align: center;
+}
+
+.plugin-mode-btn {
+  background: transparent; border: 1px solid #444; border-radius: 3px;
+  font-size: 9px; font-weight: 700; padding: 1px 5px;
+  cursor: pointer; color: #3a7bd5;
+  flex-shrink: 0; margin-right: 4px; line-height: 1.4;
+}
+.plugin-mode-btn:hover           { border-color: #666; }
+.plugin-mode-btn.mode-display    { color: #888; border-color: #333; }
+
+.plugin-remove-btn {
+  background: transparent; border: none;
+  color: #555; font-size: 10px;
+  cursor: pointer; line-height: 1;
+  padding: 2px; flex-shrink: 0;
+}
+.plugin-remove-btn:hover { color: #c0392b; }
