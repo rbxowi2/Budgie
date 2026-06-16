@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #1a1a1a;
+  color: #d4d4d4;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Bird ── */
+#bird-wrap {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+}
+#bird-art {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 4px;
+  line-height: 1.2;
+  white-space: pre;
+  user-select: none;
+  display: block;
+  color: #c8a800;
+}
+
+/* ── Success fade overlay ── */
+#flash {
+  position: fixed;
+  inset: 0;
+  background: #1a1a1a;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 200;
+  transition: opacity 0.45s ease-in;
+}
+#flash.on { opacity: 1; }
+
+/* ── Login card ── */
+.card {
+  background: #252526;
+  border-radius: 10px;
+  padding: 36px 36px 40px;
+  width: 320px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.6);
+  position: relative;
+  z-index: 10;
+}
+form { width: 100%; }
+label {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 5px;
+  letter-spacing: 0.3px;
+}
+input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 9px 12px;
+  background: #3a3a3a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #d4d4d4;
+  font-size: 14px;
+  margin-bottom: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus { border-color: #FFD700; }
+button {
+  width: 100%;
+  padding: 10px;
+  background: #3a7bd5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.2s;
+  letter-spacing: 0.3px;
+}
+button:hover  { background: #2e63b0; }
+button:disabled { background: #555; cursor: not-allowed; }
+
+/* ── Error modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: #252526;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 32px 28px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.7);
+}
+.modal-box .icon  { font-size: 32px; margin-bottom: 12px; }
+.modal-box .title { font-size: 15px; font-weight: 600; color: #e07070; margin-bottom: 8px; }
+.modal-box .msg   { font-size: 13px; color: #aaa; margin-bottom: 20px; line-height: 1.5; }
+.modal-box button { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<div id="bird-wrap"><pre id="bird-art"></pre></div>
+<div id="flash"></div>
+
+<div class="card" id="loginCard">
+  <form id="loginForm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Username</label>
+    <input type="text" name="username" autocomplete="username" autofocus>
+    <label>Password</label>
+    <input type="password" name="password" autocomplete="current-password">
+    <button type="submit" id="loginBtn">Login</button>
+  </form>
+</div>
+
+<div class="modal-overlay" id="errorModal">
+  <div class="modal-box">
+    <div class="icon">&#9888;</div>
+    <div class="title">Login Failed</div>
+    <div class="msg" id="errorMsg"></div>
+    <button onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<script>
+const ART_STAND = {{ art_stand | tojson }};
+const ART_FLY   = {{ art_fly   | tojson }};
+
+const wrap  = document.getElementById('bird-wrap');
+const art   = document.getElementById('bird-art');
+const card  = document.getElementById('loginCard');
+const flash = document.getElementById('flash');
+const form  = document.getElementById('loginForm');
+const btn   = document.getElementById('loginBtn');
+
+let busy = false;
+
+// Position wrap so bird feet sit on card top edge.
+// Returns {bW, bH} — intrinsic dimensions of the given art.
+function anchor(artText) {
+  art.textContent = artText;
+  const bW = art.offsetWidth;
+  const bH = art.offsetHeight;
+  const cR = card.getBoundingClientRect();
+  wrap.style.left = (cR.left + cR.width / 2 - bW / 2) + 'px';
+  wrap.style.top  = (cR.top  - bH + 8) + 'px';
+  return { bW, bH };
+}
+
+// ── Fly in from top-left ──────────────────────────────────────────────────────
+function flyIn() {
+  busy = true;
+  btn.disabled = true;
+
+  // Measure landing position via STAND art, then hide
+  wrap.style.transition = 'none';
+  wrap.style.opacity    = '0';
+  const { bH } = anchor(ART_STAND);
+  const cR = card.getBoundingClientRect();
+
+  // Switch to FLY art for the journey
+  art.textContent = ART_FLY;
+
+  // Offset from rest-position to apparent top-left corner
+  const cx = cR.left + cR.width / 2;
+  const cy = cR.top  - bH / 2 + 8;
+  const dx = window.innerWidth  * 0.06 - cx;
+  const dy = window.innerHeight * 0.06 - cy;
+  wrap.style.transform = `translate(${dx}px,${dy}px) scale(0.05)`;
+
+  // Force reflow then start animation
+  wrap.offsetHeight;
+  wrap.style.transition = 'transform 1.5s cubic-bezier(0.2,0.85,0.35,1), opacity 0.2s ease-out';
+  wrap.style.opacity    = '1';
+  wrap.style.transform  = 'translate(0,0) scale(1)';
+
+  // Land: switch to STAND + settle bounce
+  setTimeout(() => {
+    anchor(ART_STAND);   // re-anchor for STAND dimensions
+    wrap.style.transition = 'transform 0.12s ease-out';
+    wrap.style.transform  = 'translate(0,-5px) scale(1.04)';
+    setTimeout(() => {
+      wrap.style.transition = 'transform 0.1s ease-in';
+      wrap.style.transform  = 'translate(0,0) scale(1)';
+      setTimeout(() => { busy = false; btn.disabled = false; }, 110);
+    }, 120);
+  }, 1480);
+}
+
+// ── Login success: fly toward viewer, cover screen ────────────────────────────
+function flySuccess(url) {
+  busy = true;
+  art.textContent = ART_FLY;
+  wrap.style.transition = 'transform 0.65s ease-in';
+  wrap.style.transform  = 'translate(0,0) scale(20)';
+  setTimeout(() => { flash.classList.add('on'); }, 420);
+  setTimeout(() => { window.location.href = url; }, 920);
+}
+
+// ── Login fail: fly away top-right + modal simultaneously ─────────────────────
+function flyFail(msg) {
+  showModal(msg);
+  art.textContent = ART_FLY;
+  const cR = card.getBoundingClientRect();
+  const dx = window.innerWidth  * 0.92 - (cR.left + cR.width  / 2);
+  const dy = -(cR.top  + cR.height / 2);
+  wrap.style.transition = 'transform 0.7s ease-in, opacity 0.7s ease-in';
+  wrap.style.transform  = `translate(${dx}px,${dy}px) scale(0.04)`;
+  wrap.style.opacity    = '0';
+  // busy stays true; reset when user closes modal
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function showModal(msg) {
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('errorModal').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('errorModal').classList.remove('active');
+  form.querySelector('input[name="password"]').value = '';
+  form.querySelector('input[name="username"]').focus();
+  btn.textContent = 'Login';
+  flyIn();
+}
+
+// ── Form submit ───────────────────────────────────────────────────────────────
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (busy) return;
+  busy = true;
+  btn.disabled    = true;
+  btn.textContent = 'Logging in...';
+  const data = new FormData(form);
+  try {
+    const resp = await fetch('/login', { method: 'POST', body: data });
+    const json = await resp.json();
+    if (json.ok) { flySuccess(json.redirect); return; }
+    flyFail(json.error || 'Login failed.');
+  } catch {
+    flyFail('Network error. Please try again.');
+  }
+});
+
+// ── Reposition on resize while perched ───────────────────────────────────────
+window.addEventListener('resize', () => {
+  if (!busy) anchor(ART_STAND);
+});
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', flyIn);
+</script>
+</body>
+</html>

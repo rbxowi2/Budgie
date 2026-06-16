@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budgie</title>
+<link rel="stylesheet" href="/static/css/base.css?v={{ version }}">
+<link rel="stylesheet" href="/static/css/mdi.css?v={{ version }}">
+<link rel="stylesheet" href="/static/css/sidebar.css?v={{ version }}">
+<link rel="stylesheet" href="/static/css/modals.css?v={{ version }}">
+<link rel="stylesheet" href="/static/css/mobile.css?v={{ version }}">
+</head>
+<body>
+
+<!-- MDI workspace -->
+<div id="workspace"></div>
+
+<!-- Mobile single-camera stream (hidden on desktop) -->
+<div id="mobile-stream-area">
+  <div id="mobile-stream-placeholder">Waiting for stream...</div>
+  <img id="mobile-stream-img" alt="stream">
+  <div id="mobile-recbadge">REC</div>
+  <div id="mobile-stream-fps"></div>
+  <div id="mobile-cam-warn">Camera not responding</div>
+</div>
+
+<!-- Right sidebar -->
+<div id="sidebar">
+  <div id="top-bar">
+    <span id="top-bar-title">Budgie <span>v{{ version }}</span></span>
+    <div id="top-bar-right">
+      <span id="viewer-count-wrap">Viewers: <span id="viewer-count">—</span></span>
+      {% if is_admin %}
+      <span id="notif-wrap">
+        <span id="notif-badge" onclick="toggleNotifDropdown(event)">! <span id="notif-count">0</span></span>
+        <div id="notif-dropdown">
+          <div id="notif-list"></div>
+          <button id="notif-confirm-all" onclick="confirmAllNotifications()">Confirm All</button>
+        </div>
+      </span>
+      <button class="tbtn" onclick="openRecords()">Records</button>
+      {% endif %}
+      <button class="tbtn" onclick="location.href='/logout'">Logout</button>
+    </div>
+  </div>
+
+  <div id="sidebar-body">
+    <div class="section-title">Camera</div>
+    <div class="camsel-row">
+      <select id="sel-camera" onchange="onDropdownCameraChange(this)">
+        <option value="">No camera found</option>
+      </select>
+      {% if is_admin %}
+      <button id="btn-scan" onclick="scanCameras()" title="Refresh camera list">&#8635;</button>
+      {% endif %}
+    </div>
+    <div class="info-row"><span class="info-label">Model</span><span class="info-value" id="info-model">—</span></div>
+    <div class="info-row"><span class="info-label">Serial</span><span class="info-value" id="info-serial">—</span></div>
+    <div class="info-row"><span class="info-label">Resolution</span><span class="info-value" id="info-res">—</span></div>
+    <div class="info-row"><span class="info-label">Capture FPS</span><span class="info-value" id="info-capfps">—</span></div>
+    {% if is_admin %}
+    <div class="cam-actions">
+      <button class="btn btn-open"     onclick="onOpenCamera()">Open</button>
+      <button class="btn btn-close"    onclick="onCloseCamera()">Close</button>
+      <button class="btn btn-closeall" onclick="onCloseAll()">Close All</button>
+    </div>
+    {% endif %}
+    <div id="status-bar">Ready</div>
+    <div class="divider"></div>
+    {% if is_admin %}
+    <div class="plugin-section-hdr">
+      <div class="section-title">Plugins</div>
+      <button id="btn-add-plugin" title="Add plugin" onclick="openAddPluginModal()">+</button>
+    </div>
+    <div id="local-plugins-area"></div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Connection warning banner -->
+<div id="conn-warning">Server disconnected — attempting to reconnect...</div>
+
+<!-- Mobile FAB + backdrop -->
+<button id="mobile-sidebar-toggle" onclick="toggleMobileSidebar()">&#9776;</button>
+<div id="mobile-sidebar-backdrop" onclick="toggleMobileSidebar()"></div>
+
+{% if is_admin %}
+<!-- Records modal -->
+<div id="records-overlay" onclick="closeRecordsOutside(event)">
+  <div id="records-modal">
+    <h3>Security Records</h3>
+    <div class="rec-section">
+      <h4>Blocked IPs</h4>
+      <div id="rec-blacklist-wrap"><p class="rec-empty">Loading...</p></div>
+    </div>
+    <div class="rec-section">
+      <h4>Event Log</h4>
+      <div id="rec-log-wrap" class="rec-log-list"><p class="rec-empty">Loading...</p></div>
+    </div>
+    <div class="rec-actions">
+      <button id="btn-clear-blacklist" onclick="clearBlacklist()">Clear Blacklist</button>
+      <button id="btn-clear-notifs"    onclick="clearNotifications()">Clear Notifications</button>
+      <button id="btn-close-records"   onclick="closeRecords()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add-plugin modal -->
+<div id="add-plugin-overlay" onclick="closeAddPluginOutside(event)">
+  <div id="add-plugin-modal">
+    <h3>Add Plugin</h3>
+    <div id="add-plugin-list"></div>
+    <button id="btn-close-add-plugin" onclick="closeAddPluginModal()">Cancel</button>
+  </div>
+</div>
+{% endif %}
+
+<script src="/static/js/socket.io.min.js?v={{ version }}"></script>
+<script>const _isAdmin = {{ 'true' if is_admin else 'false' }};</script>
+<script src="/static/js/socket.js?v={{ version }}"></script>
+<script src="/static/js/mdi.js?v={{ version }}"></script>
+<script src="/static/js/health.js?v={{ version }}"></script>
+<script src="/static/js/plugin-ui.js?v={{ version }}"></script>
+{% for url in plugin_js_urls %}
+<script src="{{ url }}?v={{ version }}"></script>
+{% endfor %}
+</body>
+</html>
