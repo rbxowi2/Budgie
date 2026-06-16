@@ -1,0 +1,104 @@
+<!-- multiview/ui.html — injected into #sidebar by syncPluginArea (1.1.0) -->
+<div class="collapsible-hdr" onclick="var b=this.nextElementSibling,o=b.classList.toggle('is-open');this.querySelector('.collapse-arrow').textContent=o?'\u25bc':'\u25b6'">
+  <span class="collapse-arrow">&#9654;</span>
+  <span>MultiView</span>
+</div>
+<div class="collapsible-body is-open">
+  <div style="padding:8px 12px;display:flex;flex-direction:column;gap:6px;">
+
+    <!-- Layout -->
+    <div style="display:flex;align-items:center;gap:6px;">
+      <label style="font-size:11px;color:#aaa;white-space:nowrap;">Layout</label>
+      <select class="mv-layout"
+        style="flex:1;font-size:12px;padding:2px 4px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;outline:none;"
+        onchange="mvOnLayout(this)">
+        <option value="2h">2 &#8212; Left / Right</option>
+        <option value="2v">2 &#8212; Top / Bottom</option>
+        <option value="4">4 &#8212; 2&#xD7;2 Grid</option>
+      </select>
+    </div>
+
+    <!-- Slot 1 -->
+    <div style="display:flex;align-items:center;gap:4px;">
+      <label class="mv-lbl-1" style="font-size:11px;color:#aaa;width:32px;flex-shrink:0;text-align:right;">Left</label>
+      <select class="mv-cam mv-cam-1"
+        style="flex:1;min-width:0;font-size:12px;padding:2px 4px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;outline:none;"
+        onchange="mvOnCam(this,1)">
+        <option value="">-- none --</option>
+      </select>
+      <select class="mv-src mv-src-1"
+        style="width:70px;flex-shrink:0;font-size:11px;padding:2px 3px;background:#2d2d2d;color:#aaa;border:1px solid #555;border-radius:3px;outline:none;"
+        onchange="mvOnSrc(this,1)">
+        <option value="pipeline">Pipeline</option>
+        <option value="display">Display</option>
+      </select>
+    </div>
+
+    <!-- Slot 2 -->
+    <div style="display:flex;align-items:center;gap:4px;">
+      <label class="mv-lbl-2" style="font-size:11px;color:#aaa;width:32px;flex-shrink:0;text-align:right;">Right</label>
+      <select class="mv-cam mv-cam-2"
+        style="flex:1;min-width:0;font-size:12px;padding:2px 4px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;outline:none;"
+        onchange="mvOnCam(this,2)">
+        <option value="">-- none --</option>
+      </select>
+      <select class="mv-src mv-src-2"
+        style="width:70px;flex-shrink:0;font-size:11px;padding:2px 3px;background:#2d2d2d;color:#aaa;border:1px solid #555;border-radius:3px;outline:none;"
+        onchange="mvOnSrc(this,2)">
+        <option value="pipeline">Pipeline</option>
+        <option value="display">Display</option>
+      </select>
+    </div>
+
+    <!-- Slots 3-4 (4-grid only) -->
+    <div class="mv-extra" style="display:flex;flex-direction:column;gap:6px;">
+
+      <div style="display:flex;align-items:center;gap:4px;">
+        <label style="font-size:11px;color:#aaa;width:32px;flex-shrink:0;text-align:right;">BL</label>
+        <select class="mv-cam mv-cam-3"
+          style="flex:1;min-width:0;font-size:12px;padding:2px 4px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;outline:none;"
+          onchange="mvOnCam(this,3)">
+          <option value="">-- none --</option>
+        </select>
+        <select class="mv-src mv-src-3"
+          style="width:70px;flex-shrink:0;font-size:11px;padding:2px 3px;background:#2d2d2d;color:#aaa;border:1px solid #555;border-radius:3px;outline:none;"
+          onchange="mvOnSrc(this,3)">
+          <option value="pipeline">Pipeline</option>
+          <option value="display">Display</option>
+        </select>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:4px;">
+        <label style="font-size:11px;color:#aaa;width:32px;flex-shrink:0;text-align:right;">BR</label>
+        <select class="mv-cam mv-cam-4"
+          style="flex:1;min-width:0;font-size:12px;padding:2px 4px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;outline:none;"
+          onchange="mvOnCam(this,4)">
+          <option value="">-- none --</option>
+        </select>
+        <select class="mv-src mv-src-4"
+          style="width:70px;flex-shrink:0;font-size:11px;padding:2px 3px;background:#2d2d2d;color:#aaa;border:1px solid #555;border-radius:3px;outline:none;"
+          onchange="mvOnSrc(this,4)">
+          <option value="pipeline">Pipeline</option>
+          <option value="display">Display</option>
+        </select>
+      </div>
+
+    </div><!-- .mv-extra -->
+
+    <!-- Resolution -->
+    <div style="display:flex;align-items:center;gap:6px;">
+      <label style="font-size:11px;color:#aaa;white-space:nowrap;">Res.</label>
+      <select class="mv-res"
+        style="flex:1;font-size:12px;padding:2px 4px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;outline:none;"
+        onchange="mvOnRes(this)">
+        <option value="auto">Auto (source size)</option>
+        <option value="3840x2160">3840 &#xD7; 2160</option>
+        <option value="1920x1080">1920 &#xD7; 1080</option>
+        <option value="1280x720">1280 &#xD7; 720</option>
+        <option value="854x480">854 &#xD7; 480</option>
+        <option value="640x360">640 &#xD7; 360</option>
+      </select>
+    </div>
+
+  </div>
+</div>
