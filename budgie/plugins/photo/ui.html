@@ -1,0 +1,16 @@
+<!-- photo/ui.html — Photo capture (1.0.0)
+     Multi-camera safe: NO fixed IDs. All elements use data-id attributes.
+     JS queries are scoped to the nearest .plugin-ui-block ancestor. -->
+<div class="collapsible-hdr" onclick="var b=this.nextElementSibling,o=b.classList.toggle('is-open');this.querySelector('.collapse-arrow').textContent=o?'\u25bc':'\u25b6'">
+  <span class="collapse-arrow">&#9654;</span>
+  <span>Photo</span>
+</div>
+<div class="collapsible-body">
+  <div class="fmt-row">
+    <span style="color:#888;font-size:11px;">Format:</span>
+    <label><input type="radio" name="photo_fmt" value="BMP" checked onchange="photoOnFmt(this)"> BMP (Lossless)</label>
+    <label><input type="radio" name="photo_fmt" value="JPG"       onchange="photoOnFmt(this)"> JPG (Q85)</label>
+  </div>
+  <button class="btn btn-blue" onclick="photoTakePhoto(this)">Photo</button>
+  <div class="divider"></div>
+</div>
