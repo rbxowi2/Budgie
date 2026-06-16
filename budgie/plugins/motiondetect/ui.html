@@ -1,0 +1,41 @@
+<!-- motiondetect/ui.html — MotionDetect plugin (1.1.0) -->
+<div class="collapsible-hdr" onclick="var b=this.nextElementSibling,o=b.classList.toggle('is-open');this.querySelector('.collapse-arrow').textContent=o?'&#9660;':'&#9654;'">
+  <span class="collapse-arrow">&#9654;</span>
+  <span>Motion Detect</span>
+</div>
+<div class="collapsible-body">
+  <div style="padding:8px 12px;display:flex;flex-direction:column;gap:8px;">
+
+    <button class="btn" style="background:#c0392b;color:#fff;border:1px solid #e74c3c;font-weight:600;"
+            onclick="motdetOpenDraw(this)">Draw Zones</button>
+
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:11px;color:#aaa;flex:1;">Enable</label>
+      <input type="checkbox" class="motdet-enable" onchange="motdetOnEnable(this)">
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:11px;color:#aaa;flex:1;">Pixel Threshold</span>
+      <span class="motdet-var-label" style="font-size:11px;color:#aaa;min-width:28px;text-align:right;">25</span>
+    </div>
+    <input type="range" class="motdet-var-slider" min="5" max="100" step="1" value="25"
+           oninput="motdetOnVarInput(this)" onchange="motdetOnVarChange(this)">
+
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:11px;color:#aaa;flex:1;">Min Pixels</span>
+      <span class="motdet-count-label" style="font-size:11px;color:#aaa;min-width:36px;text-align:right;">500</span>
+    </div>
+    <input type="range" class="motdet-count-slider" min="50" max="5000" step="50" value="500"
+           oninput="motdetOnCountInput(this)" onchange="motdetOnCountChange(this)">
+
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:11px;color:#aaa;flex:1;">Cooldown (s)</span>
+      <span class="motdet-cooldown-label" style="font-size:11px;color:#aaa;min-width:28px;text-align:right;">3.0</span>
+    </div>
+    <input type="range" class="motdet-cooldown-slider" min="0.5" max="30" step="0.5" value="3.0"
+           oninput="motdetOnCooldownInput(this)" onchange="motdetOnCooldownChange(this)">
+
+  </div>
+</div>
