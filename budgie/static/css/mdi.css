@@ -1,0 +1,131 @@
+/* mdi.css — MDI workspace and window system */
+
+#workspace {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #121212;
+  min-width: 0;
+}
+
+.mdi-win {
+  position: absolute;
+  background: #1e1e1e;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  min-height: 160px;
+  overflow: hidden;
+  z-index: 10;
+}
+.mdi-win.selected {
+  border-color: #3a7bd5;
+  z-index: 20;
+}
+
+.mdi-titlebar {
+  background: #252526;
+  border-bottom: 1px solid #3a3a3a;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: move;
+  user-select: none;
+  flex-shrink: 0;
+  min-height: 28px;
+  touch-action: none;
+}
+.mdi-win.selected .mdi-titlebar {
+  background: #1f2d4a;
+  border-bottom-color: #3a7bd5;
+}
+
+.mdi-label {
+  font-size: 11px;
+  color: #aaa;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mdi-win.selected .mdi-label { color: #d4d4d4; }
+
+.mdi-btns { display: flex; gap: 3px; flex-shrink: 0; }
+.mdi-btn {
+  background: #3a3a3a;
+  border: none;
+  color: #666;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+.mdi-btn:hover           { background: #555; color: #d4d4d4; }
+.mdi-btn.close-btn:hover { background: #c0392b; color: white; }
+
+.mdi-content {
+  flex: 1;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+  min-height: 0;
+}
+.mdi-stream {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+}
+.mdi-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  font-size: 13px;
+  pointer-events: none;
+}
+.mdi-fps {
+  position: absolute;
+  top: 6px; right: 8px;
+  font-size: 10px; color: #555;
+  background: rgba(0,0,0,0.55);
+  padding: 1px 5px; border-radius: 3px;
+  pointer-events: none;
+}
+.mdi-recbadge {
+  position: absolute;
+  top: 6px; left: 8px;
+  background: #c0392b;
+  color: white;
+  font-size: 10px; font-weight: bold;
+  padding: 2px 7px; border-radius: 3px;
+  display: none;
+  pointer-events: none;
+}
+.mdi-resize {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 14px; height: 14px;
+  cursor: se-resize;
+  background: linear-gradient(135deg, transparent 50%, #444 50%);
+  border-radius: 0 0 5px 0;
+  z-index: 5;
+  touch-action: none;
+}
+
+/* Minimized state: content hidden, window collapses to titlebar */
+.mdi-win.minimized .mdi-content { display: none !important; }
+.mdi-win.minimized .mdi-resize  { display: none !important; }
+.mdi-win.minimized { height: auto !important; min-height: 0 !important; }
