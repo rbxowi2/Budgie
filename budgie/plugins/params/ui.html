@@ -1,0 +1,96 @@
+<!-- params/ui.html — Parameters group injected into #sidebar by syncPluginArea.
+     Multi-camera safe: NO fixed IDs. All elements use data-id attributes.
+     JS queries are scoped to the nearest .plugin-ui-block ancestor. -->
+<div class="collapsible-hdr" onclick="var b=this.nextElementSibling,o=b.classList.toggle('is-open');this.querySelector('.collapse-arrow').textContent=o?'\u25bc':'\u25b6'">
+  <span class="collapse-arrow">&#9654;</span>
+  <span>Parameters</span>
+</div>
+<div class="collapsible-body">
+
+  <!-- ── Desktop: vertical sliders ── -->
+  <div class="section-title desktop-only">Exposure (µs)</div>
+  <div class="check-row desktop-only">
+    <input type="checkbox" data-id="chk-exp-auto" onchange="onExposureAuto(this)">
+    <label>Auto Exposure</label>
+    <input type="number" data-id="inp-exp-auto-upper" value="100000" min="100" step="1"
+           style="width:80px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;padding:2px 4px;font-size:11px;"
+           title="Auto Exposure Upper Limit (µs)"
+           onchange="onExpAutoUpper(this)" onkeydown="if(event.key==='Enter')this.blur()">
+    <span style="font-size:10px;color:#888;">µs</span>
+  </div>
+  <div class="param-row desktop-only">
+    <label>Value <span data-id="exp-display">30000</span> µs</label>
+    <input type="range" data-id="sl-exp" min="0" max="1000" step="1" value="500"
+           oninput="onLogSlider('exposure', this)" onchange="onLogSlider('exposure', this)">
+  </div>
+
+  <div class="section-title desktop-only">Gain (dB)</div>
+  <div class="check-row desktop-only">
+    <input type="checkbox" data-id="chk-gain-auto" onchange="onGainAuto(this)">
+    <label>Auto Gain</label>
+  </div>
+  <div class="param-row desktop-only">
+    <label>Value <span data-id="gain-display">0.0</span> dB</label>
+    <input type="range" data-id="sl-gain" min="0" max="15" step="0.1" value="0"
+           oninput="onLinearSlider('gain', this)" onchange="onLinearSlider('gain', this)">
+  </div>
+
+  <div class="section-title desktop-only">FPS Limit</div>
+  <div class="param-row desktop-only">
+    <label>Value <span data-id="fps-display">200</span> fps</label>
+    <input type="range" data-id="sl-fps" min="0" max="1000" step="1" value="500"
+           oninput="onLogSlider('fps', this)" onchange="onLogSlider('fps', this)">
+  </div>
+
+  <!-- ── Mobile: compact slider groups ── -->
+  <div data-id="sl-group-exp" class="mobile-only">
+    <div class="check-row" style="padding:0 0 4px 0;">
+      <input type="checkbox" data-id="chk-exp-auto-m" onchange="onExposureAuto(this)">
+      <label style="font-size:10px;color:#888;">Auto Exp</label>
+      <input type="number" data-id="inp-exp-auto-upper-m" value="100000" min="100" step="1"
+             style="width:68px;background:#2d2d2d;color:#d4d4d4;border:1px solid #555;border-radius:3px;padding:1px 3px;font-size:10px;"
+             onchange="onExpAutoUpper(this)" onkeydown="if(event.key==='Enter')this.blur()">
+      <span style="font-size:9px;color:#888;">µs</span>
+    </div>
+    <div class="sl-title">Exp (µs)</div>
+    <div class="sl-val" data-id="exp-display-m">30000</div>
+    <input type="range" data-id="sl-exp-m" min="0" max="1000" step="1" value="500"
+           oninput="onLogSlider('exposure', this, true)" onchange="onLogSlider('exposure', this, true)">
+  </div>
+
+  <div data-id="sl-group-gain" class="mobile-only">
+    <div class="check-row" style="padding:0 0 4px 0;">
+      <input type="checkbox" data-id="chk-gain-auto-m" onchange="onGainAuto(this)">
+      <label style="font-size:10px;color:#888;">Auto Gain</label>
+    </div>
+    <div class="sl-title">Gain (dB)</div>
+    <div class="sl-val" data-id="gain-display-m">0.0</div>
+    <input type="range" data-id="sl-gain-m" min="0" max="15" step="0.1" value="0"
+           oninput="onLinearSlider('gain', this, true)" onchange="onLinearSlider('gain', this, true)">
+  </div>
+
+  <div data-id="sl-group-fps" class="mobile-only">
+    <div class="sl-title">FPS</div>
+    <div class="sl-val" data-id="fps-display-m">200</div>
+    <input type="range" data-id="sl-fps-m" min="0" max="1000" step="1" value="500"
+           oninput="onLogSlider('fps', this, true)" onchange="onLogSlider('fps', this, true)">
+  </div>
+
+  <!-- ── Native resolution selector ── -->
+  <div data-id="native-mode-wrap" style="display:none;">
+    <div class="divider"></div>
+    <div style="padding:4px 16px 8px;">
+      <div style="font-size:11px;color:#888;margin-bottom:5px;letter-spacing:0.5px;text-transform:uppercase;font-weight:700;">Native Resolution</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <select data-id="sel-native-mode"
+                style="flex:1;background:#3a3a3a;color:#d4d4d4;border:1px solid #444;border-radius:4px;padding:5px 6px;font-size:12px;outline:none;min-width:0;cursor:pointer;">
+        </select>
+        <button onclick="applyNativeMode(this)"
+                style="background:#3a7bd5;color:white;border:none;border-radius:4px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;">
+          Apply
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end collapsible-body -->
