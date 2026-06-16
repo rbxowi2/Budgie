@@ -1,0 +1,73 @@
+<!-- looprecord/ui.html — Loop Recording (1.0.0)
+     Multi-camera safe: NO fixed IDs. All elements scoped via data-id + .plugin-ui-block ancestor. -->
+<div class="collapsible-hdr" onclick="var b=this.nextElementSibling,o=b.classList.toggle('is-open');this.querySelector('.collapse-arrow').textContent=o?'▼':'▶'">
+  <span class="collapse-arrow">&#9654;</span>
+  <span>Loop Record</span>
+  <span data-id="lr-badge" style="display:none;margin-left:6px;padding:1px 6px;background:#c0392b;color:#fff;border-radius:3px;font-size:11px;font-weight:bold;">REC</span>
+</div>
+<div class="collapsible-body">
+
+  <!-- Status (shown only when chunks exist or recording) -->
+  <div data-id="lr-status-area" style="display:none;margin-bottom:6px;">
+    <div data-id="lr-chunk-bar" style="font-size:12px;color:#aaa;margin-bottom:2px;"></div>
+    <div data-id="lr-disk-bar"  style="font-size:11px;color:#888;"></div>
+  </div>
+
+  <!-- Settings (disabled while recording) -->
+  <div data-id="lr-settings">
+
+    <div class="param-row">
+      <span class="param-label">Resolution</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;">
+        <button class="btn btn-gray" data-lr-res="native"  onclick="lrSetRes(this)">Native</button>
+        <button class="btn btn-gray" data-lr-res="1080p"   onclick="lrSetRes(this)">1080p</button>
+        <button class="btn btn-gray" data-lr-res="720p"    onclick="lrSetRes(this)">720p</button>
+        <button class="btn btn-gray" data-lr-res="480p"    onclick="lrSetRes(this)">480p</button>
+      </div>
+    </div>
+
+    <div class="param-row" style="margin-top:6px;">
+      <span class="param-label">Loop Duration</span>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+        <input type="number" data-id="lr-loop-min" min="10" max="10080" step="10"
+               style="width:70px;" onchange="lrSetParam(this,'loop_loop_min')">
+        <span style="color:#888;font-size:12px;">min</span>
+      </div>
+    </div>
+
+    <div class="param-row" style="margin-top:6px;">
+      <span class="param-label">Chunk Size</span>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+        <input type="number" data-id="lr-chunk-min" min="1" max="60" step="1"
+               style="width:70px;" onchange="lrSetParam(this,'loop_chunk_min')">
+        <span style="color:#888;font-size:12px;">min</span>
+      </div>
+    </div>
+
+    <div class="param-row" style="margin-top:6px;">
+      <span class="param-label">Quality</span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;">
+        <button class="btn btn-gray" data-lr-q="low"    onclick="lrSetQuality(this)">Low</button>
+        <button class="btn btn-gray" data-lr-q="medium" onclick="lrSetQuality(this)">Medium</button>
+        <button class="btn btn-gray" data-lr-q="high"   onclick="lrSetQuality(this)">High</button>
+        <button class="btn btn-gray" data-lr-q="custom" onclick="lrSetQuality(this)">Custom</button>
+      </div>
+    </div>
+
+    <div data-id="lr-custom-bitrate-row" style="display:none;margin-top:6px;" class="param-row">
+      <span class="param-label">Bitrate</span>
+      <div style="display:flex;align-items:center;gap:4px;margin-top:2px;">
+        <input type="number" data-id="lr-bitrate" min="128" max="20000" step="128"
+               style="width:80px;" onchange="lrSetParam(this,'loop_bitrate_kbps')">
+        <span style="color:#888;font-size:12px;">Kbps</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Storage estimate -->
+  <div data-id="lr-estimate" style="display:none;font-size:11px;color:#888;margin:8px 0 6px;padding:4px 6px;background:#1a1a1a;border-radius:3px;"></div>
+
+  <button class="btn btn-blue" data-id="lr-btn" onclick="lrToggle(this)">Start Loop Recording</button>
+  <div class="divider"></div>
+</div>
