@@ -276,32 +276,45 @@ Understanding the frame pipeline makes both plugins and drivers easy to write.
                    encodes JPEG, pushes "frame" events to each viewer
 ```
 
-#### Pipeline (P) vs. Display (D) mode
+#### Pipeline / Display segment markers (P / D)
 
-Each plugin runs its `on_frame()` in one of two modes, set per camera and
-toggleable from the admin UI. The pipeline thread runs the plugins in **two
-passes**:
+**Pipeline (P)** and **Display (D)** are **segment markers** on the per-camera
+plugin list — not behaviours baked into a plugin. The **list order** (how the
+plugins are arranged in the sidebar) is what determines execution order; the
+marker only says which of two phases a plugin runs in. The pipeline thread runs
+the list in **two phases**:
 
-1. **Pipeline mode (P)** — runs first. These plugins form a chain: each one's
-   output replaces the **shared frame** passed to the next. This frame is also
-   what gets **recorded and photographed**. So a P-mode change is *baked in*
-   everywhere — downstream plugins, the recording, and the live view all see it.
+| Marker | Phase | Output frame |
+|--------|-------|--------------|
+| **Pipeline (P)** | Phase 1 — runs first | the *pipeline frame* |
+| **Display (D)**  | Phase 2 — runs after | the *display frame* |
 
-2. **Display mode (D)** — runs second, starting from a **copy** of the final
-   pipeline frame. D-mode changes reach **only the live stream** sent to
-   browsers; the recorded/saved frame is left untouched.
+- **Phase 1** runs every Pipeline-marked plugin **in list order**, each one's
+  output feeding the next, producing the final **pipeline frame**.
+- **Phase 2** runs every Display-marked plugin **in list order**, starting from
+  the fully-processed pipeline frame, producing the **display frame**.
+
+Two frames come out of the two phases:
+
+- **Pipeline frame** — the output of Phase 1, available via `get_latest_frame(cam_id)`.
+- **Display frame** — the output of Phase 2 (the pipeline frame plus any Phase-2
+  effects), available via `get_display_frame(cam_id)`; this is what viewers see.
 
 ```
- raw frame ─► [P plugin] ─► [P plugin] ─► pipeline frame ─► recording / photo
-                                              │ (copy)
-                                              ▼
-                                       [D plugin] ─► [D plugin] ─► display frame ─► viewers
+ raw ─► [P] ─► [P] ─► … ─► pipeline frame   (Phase-1 output · get_latest_frame)
+                              │ (starting point for Phase 2)
+                              ▼
+                             [D] ─► [D] ─► … ─► display frame   (sent to viewers · get_display_frame)
 ```
 
-Example: an overlay-text plugin in **P** mode burns the text into your
-recordings; the same plugin in **D** mode shows the text in the live view only,
-keeping recordings clean. Choose P when the effect must be permanent, D when it
-is just an on-screen aid.
+**Any plugin can carry either marker** — recording, photo, detection, overlay,
+all of them. The marker is *not* tied to a plugin's purpose: it only chooses
+which phase the plugin runs in (and therefore which frame its `on_frame`
+operates on), while its list position chooses the order within that phase. For
+example, a recorder placed in the Display segment **after** an overlay plugin
+will record the overlay; the same recorder in the Pipeline segment, or before
+the overlay, will not. Arrange the list and the markers to compose the result
+you want.
 
 Alongside the frame path, the main program offers these touchpoints:
 
